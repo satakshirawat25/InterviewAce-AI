@@ -12,6 +12,18 @@ const Login = ({ setCurrentPage }) => {
   //handle login form submit
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    if(!validateEmail(email)){
+      setError("Please enter a valid email address")
+      return
+    }
+    if(password){
+      setError("Please enter the password")
+      return
+    }
+    setError("")
+
+    //Login API call
   };
   return (
     <div className="w-[90vw] md:w-[33vw] p-7 flex flex-col justify-center">
@@ -37,7 +49,7 @@ const Login = ({ setCurrentPage }) => {
           type="password"
         />
         {error && <p className="text-red-500 text-xs pb-2.5">{error}</p>}
-        <button type="sumit" className="btn-primary">LOGIN</button>
+        <button type="sumit" className="btn-primary h-8">LOGIN</button>
 
         <p className="text-[13px] text-slate-800 mt-3">
             Don't have an account?{" "}
