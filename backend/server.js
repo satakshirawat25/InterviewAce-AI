@@ -5,10 +5,14 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import { connectDB } from "./config/db.js";
-import authRoutes from './routes/authRoutes.js'
-import  sessionRoutes  from "./routes/sessionRoutes.js";
-import  QuestionRoutes  from "./routes/questionRoutes.js";
-
+import authRoutes from "./routes/authRoutes.js";
+import sessionRoutes from "./routes/sessionRoutes.js";
+import QuestionRoutes from "./routes/questionRoutes.js";
+import {
+  generateConceptExplanation,
+  generateInterviewQuestions,
+} from "./controllers/aiController.js";
+import { protect } from "./middlewares/authMiddlewares.js";
 
 dotenv.config();
 
@@ -17,7 +21,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-connectDB()
+connectDB();
 
 // middleware handle to cors
 app.use(
@@ -32,17 +36,14 @@ app.use(
 app.use(express.json());
 
 // routes
-app.use("/api/auth",authRoutes)
-app.use("/api/sessions",sessionRoutes)
-app.use("/api/questions",QuestionRoutes)
+app.use("/api/auth", authRoutes);
+app.use("/api/sessions", sessionRoutes);
+app.use("/api/questions", QuestionRoutes);
 
-app.use("/api/ai/generate-question",protect,generateInterviewQuestions)
-app.use("/api/ai/generate-explanations",protect,generateConceptExplanation)
-
-
-
-
-
+app.post("/api/ai/generate-questions",protect, generateInterviewQuestions);
+// app.use("/api/ai/generate-questions", protect, generateInterviewQuestions);
+app.post("/api/ai/generate-explanation",protect, generateConceptExplanation);
+// app.use("/api/ai/generate-explanations", protect, generateConceptExplanation);
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
