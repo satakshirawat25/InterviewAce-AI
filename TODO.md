@@ -1,0 +1,2 @@
+- [ ] Modify the upload-image route in backend/routes/authRoutes.js to properly handle multer errors using callback pattern
+- [ ] Test the upload functionality to ensure errors are returned as JSON instead of HTML

@@ -6,6 +6,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { connectDB } from "./config/db.js";
 import authRoutes from './routes/authRoutes.js'
+import  sessionRoutes  from "./routes/sessionRoutes.js";
 
 dotenv.config();
 
@@ -30,7 +31,7 @@ app.use(express.json());
 
 // routes
 app.use("/api/auth",authRoutes)
-// app.use("/api/sessions",sessionRoutes)
+app.use("/api/sessions",sessionRoutes)
 // app.use("/api/questions",questionRoutes)
 
 // app.use("/api/ai/generate-question",protect,generateInterviewQuestions)

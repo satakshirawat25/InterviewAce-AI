@@ -3,7 +3,8 @@ import { User } from '../models/User.js'
 
 //middleware to protect routes
 
-export const protect = async(req,res)=>{
+export const protect = async(req,res,next)=>{
+    
     try{
         let token = req.headers.authorization
 
@@ -11,10 +12,11 @@ export const protect = async(req,res)=>{
             token = token.split(" ")[1] //etract token
             const decoded = jwt.verify(token,process.env.JWT_SECRET)
             req.user = await User.findById(decoded.id).select("-password")
+            next()
         }else{
             res.status(401).json({
-            message:"Token authorized , no token",
-          e
+            message:"Not authorized , no token",
+          
         })
         }
     }catch(error){
