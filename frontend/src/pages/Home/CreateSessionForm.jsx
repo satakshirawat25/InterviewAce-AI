@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Input from "../../components/Inputs/Input.jsx";
+import SpinnerLoader from "../../components/Loader/SpinnerLoader.jsx";
+import axiosInstance from "../../utils/axiosInstance.js";
+import { API_PATHS } from "../../utils/apiPaths.js";
 
 const CreateSessionForm = () => {
   const [formData, setFormData] = useState({
@@ -20,7 +23,10 @@ const CreateSessionForm = () => {
       [key]: value,
     }));
   };
+
   const handleCreateSession = async (e) => {
+    // console.log("FORM DATA 👉", formData);
+
     e.preventDefault();
 
     const { role, experience, topicsToFocus } = formData;
@@ -30,6 +36,43 @@ const CreateSessionForm = () => {
       return;
     }
     setError("");
+    setIsLoading(true);
+
+
+  
+
+
+    try {
+      //call AI api to generate question
+      const aiResoponse = await axiosInstance.post(
+        API_PATHS.AI.GENERATE_QUESTIONS,
+        {
+          role,
+          experience,
+          topicsToFocus,
+          numberOfQuestions: 10,
+        }
+      );
+
+      const generateQuestions = aiResoponse.data;
+
+      const response = await axiosInstance.post(API_PATHS.SESSION.CREATE, {
+        ...formData,
+        questions: generateQuestions,
+      });
+
+      if (response.data?.session?._id) {
+        navigate(`/interview-prep/${response.data?.session?._id}`);
+      }
+    } catch (error) {
+      if (error.response && error.response.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Something went wrong.Please try again");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <div className="w-[90vw] md:w-[35vw] p-7 flex flex-col justify-center">
@@ -51,9 +94,7 @@ const CreateSessionForm = () => {
 
         <Input
           value={formData.experience}
-          onChange={({ target }) =>
-            handleChange("experience", target.experience)
-          }
+          onChange={({ target }) => handleChange("experience", target.value)}
           label="Years of Experience"
           placeholder="(e.g.,1 year , 3 years)"
           type="number"
@@ -61,9 +102,7 @@ const CreateSessionForm = () => {
 
         <Input
           value={formData.topicsToFocus}
-          onChange={({ target }) =>
-            handleChange("topicsToFocus", target.topicsToFocus)
-          }
+          onChange={({ target }) => handleChange("topicsToFocus", target.value)}
           label="Topics to focus on"
           placeholder="(Comma-seperated, e.g., React,Express MongoDB)"
           type="text"
@@ -71,9 +110,7 @@ const CreateSessionForm = () => {
 
         <Input
           value={formData.description}
-          onChange={({ target }) =>
-            handleChange("description", target.description)
-          }
+          onChange={({ target }) => handleChange("description", target.value)}
           label="Description"
           placeholder="(Any specific goals or notes for this session)"
           type="text"
@@ -86,7 +123,7 @@ const CreateSessionForm = () => {
           className="btn-primary w-full mt-2 "
           disabled={isLoading}
         >
-          {isLoading && <SpinnerLoader/>}Create Session
+          {isLoading && <SpinnerLoader />}Create Session
         </button>
       </form>
     </div>
