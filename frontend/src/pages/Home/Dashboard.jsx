@@ -9,9 +9,7 @@ import SummaryCard from "../../components/Cards/SummaryCard.jsx";
 import moment from "moment";
 import CreateSessionForm from "./CreateSessionForm.jsx";
 import Modal from "../../components/Modal.jsx";
-
-
-
+import DeleteAlertContent from "../components/DeleteAlertContent.jsx";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -28,14 +26,21 @@ const Dashboard = () => {
     try {
       const response = await axiosInstance.get(API_PATHS.SESSION.GET_ALL);
 
-
       setSessions(response.data.data);
     } catch (error) {
       console.error("Error fetching session data", error);
       console.error("Error details:", error.response);
     }
   };
-  const deleteSession = async (sessionData) => {};
+  const deleteSession = async (sessionData) => {
+    try {
+      await axiosInstance.delete(API_PATHS.SESSION.DELETE(sessionData._id));
+      setOpenDeleteAlert({ open: false, data: null });
+      fetchAllSession(); // Refresh the sessions list
+    } catch (error) {
+      console.error("Error deleting session", error);
+    }
+  };
   useEffect(() => {
     fetchAllSession();
   }, []);
@@ -75,14 +80,29 @@ const Dashboard = () => {
       </div>
 
       <Modal
-      isOpen ={openCreateModal}
-      onClose={()=>{
-        setOpenCreateModal(false)
-      }}
-      hideHeader
+        isOpen={openCreateModal}
+        onClose={() => {
+          setOpenCreateModal(false);
+        }}
+        hideHeader
       >
         <div>
-          <CreateSessionForm/>
+          <CreateSessionForm />
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={openDeleteAlert?.open}
+        onClose={() => {
+          setOpenDeleteAlert({ open: false, data: null });
+        }}
+        title="Delete Alert"
+      >
+        <div className="">
+          <DeleteAlertContent
+            content="Are you Sure you want to delete htis session detail?"
+            onDelete={() => deleteSession(openDeleteAlert.data)}
+          />
         </div>
       </Modal>
     </DashboardLayout>
