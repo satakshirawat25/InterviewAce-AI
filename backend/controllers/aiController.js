@@ -63,6 +63,8 @@ export const generateInterviewQuestions = async (req, res) => {
       ],
       temperature: 0.7,
     });
+    
+
 
     // let rawText = response.text;
     const rawText = response.choices[0].message.content;
@@ -108,6 +110,8 @@ export const generateConceptExplanation = async (req, res) => {
     });
 
     const rawText = response.choices[0].message.content;
+    console.log("Raw AI response:", rawText); // Log for debugging
+
     const cleanedText = rawText
       .replace(/```json\s*/g, "") // starting ```json hatao
       .replace(/```/g, "") // ending ``` hatao
@@ -119,13 +123,16 @@ export const generateConceptExplanation = async (req, res) => {
     // Extract JSON from the text
     const jsonText = extractJson(sanitizedText);
 
+    console.log("Extracted JSON text:", jsonText); // Log for debugging
+
     //now safe to parse
     const data = JSON.parse(jsonText);
 
     res.status(200).json(data);
   } catch (error) {
+    console.error("Error in generateConceptExplanation:", error); // Log error
     res.status(500).json({
-      message: "Failed to generate questions",
+      message: "Failed to generate explanation",
       error: error.message,
     });
   }

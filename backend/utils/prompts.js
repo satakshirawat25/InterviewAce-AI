@@ -15,6 +15,11 @@ Task:
 - If the answer needs a code example, add a small code block inside.
 - Keep formatting very clean.
 
+Example:
+\`\`\`javascript
+console.log("Hello World");
+\`\`\`
+
 Return a pure JSON array like:
 
 [
@@ -36,6 +41,12 @@ Task:
 - After the explanation, provide a short and clear title that summarizes the concept.
 - If the explanation requires a code example, add a small code block.
 - Keep formatting very clean.
+\`\`\`javascript
+app.use((req, res, next) => {
+  console.log(req.method);
+  next();
+});
+\`\`\`
 
 Return the result as a valid JSON object in the following format:
 
