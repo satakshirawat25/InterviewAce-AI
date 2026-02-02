@@ -61,7 +61,7 @@ const QuestionCard = ({
 
           <button className="text-gray-400 hover:text-gray-500 cursor-pointer" onClick={toggleExpand}>
             <LuChevronDown
-              sixe={20}
+              size={20}
               className={`transform transition-transform duration-300 ${
                 isExpanded ? "rotate-180" : ""
               }`}
